@@ -1,6 +1,6 @@
 name: human_duration_parser
 description: Parse human readable duration into Dart's duration
-version: 2.0.0
+version: 2.0.1
 homepage: https://github.com/l7ssha/duration_parser
 
 environment:
