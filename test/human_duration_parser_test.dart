@@ -1,4 +1,4 @@
-import 'package:duration_parser/human_duration_parser.dart';
+import 'package:human_duration_parser/human_duration_parser.dart';
 import 'package:test/test.dart';
 
 void main() {
