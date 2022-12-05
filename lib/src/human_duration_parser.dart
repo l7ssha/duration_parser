@@ -7,6 +7,20 @@ final hoursRegex = RegExp(r"(\d+)([ ]*)(hours|hour|h)");
 final minutesRegex = RegExp(r"(\d+)([ ]*)(minutes|minute|min|m)");
 final secondsRegex = RegExp(r"(\d+)([ ]*)(seconds|second|secs|sec|s)");
 
+Duration _computeYears(int years) {
+  final now = DateTime.now();
+  final target = now.copyWith(year: now.year + years);
+
+  return target.difference(now);
+}
+
+Duration _computeMonths(int months) {
+  final now = DateTime.now();
+  final target = now.copyWith(month: now.month + months);
+
+  return target.difference(now);
+}
+
 Duration parseStringToDuration(
   String durationString, {
   bool matchYears = true,
@@ -20,8 +34,8 @@ Duration parseStringToDuration(
   var duration = Duration.zero;
 
   final elements = <RegExp, Duration Function(int amount)>{
-    if (matchYears) yearsRegex: (amount) => const Duration(days: 365) * amount,
-    if (matchMonths) monthsRegex: (amount) => const Duration(days: 30) * amount,
+    if (matchYears) yearsRegex: _computeYears,
+    if (matchMonths) monthsRegex: _computeMonths,
     if (matchDays) daysRegex: (amount) => const Duration(days: 1) * amount,
     if (matchHours) hoursRegex: (amount) => const Duration(hours: 1) * amount,
     if (matchMinutes) minutesRegex: (amount) => const Duration(minutes: 1) * amount,
