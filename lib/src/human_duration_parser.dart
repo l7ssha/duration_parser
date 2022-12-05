@@ -30,6 +30,7 @@ Duration? parseStringToDuration(
   bool matchMinutes = true,
   bool matchSeconds = true,
   bool matchMilliSeconds = true,
+  bool allowNegative = true,
 }) {
   var duration = Duration.zero;
   bool parsed = false;
@@ -61,6 +62,10 @@ Duration? parseStringToDuration(
   }
 
   if (!parsed) {
+    return null;
+  }
+
+  if (!allowNegative && duration < Duration.zero) {
     return null;
   }
 
