@@ -21,7 +21,7 @@ Duration _computeMonths(int months) {
   return target.difference(now);
 }
 
-Duration parseStringToDuration(
+Duration? parseStringToDuration(
   String durationString, {
   bool matchYears = true,
   bool matchMonths = true,
@@ -32,6 +32,7 @@ Duration parseStringToDuration(
   bool matchMilliSeconds = true,
 }) {
   var duration = Duration.zero;
+  bool parsed = false;
 
   final elements = <RegExp, Duration Function(int amount)>{
     if (matchYears) yearsRegex: _computeYears,
@@ -54,8 +55,13 @@ Duration parseStringToDuration(
       final amount = int.tryParse(amountText!);
       if (amount != null) {
         duration += value(amount);
+        parsed = true;
       }
     }
+  }
+
+  if (!parsed) {
+    return null;
   }
 
   return duration;
