@@ -12,17 +12,15 @@ Duration addTwoDurations(Duration first, Duration second) {
 }
 
 Duration parseStringToDuration(
-    String durationString,
-    {
-      bool matchYears = true,
-      bool matchMonths = true,
-      bool matchDays = true,
-      bool matchHours = true,
-      bool matchMinutes = true,
-      bool matchSeconds = true,
-      bool matchMilliSeconds = true,
-    }
-) {
+  String durationString, {
+  bool matchYears = true,
+  bool matchMonths = true,
+  bool matchDays = true,
+  bool matchHours = true,
+  bool matchMinutes = true,
+  bool matchSeconds = true,
+  bool matchMilliSeconds = true,
+}) {
   var duration = Duration();
 
   if (matchYears) {
