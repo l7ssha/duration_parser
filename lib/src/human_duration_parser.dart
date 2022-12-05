@@ -1,11 +1,11 @@
 library duration_parser;
 
-final yearsRegex = RegExp(r"(\d+)([ ]*)(years|year|y)");
-final monthsRegex = RegExp(r"(\d+)([ ]*)(months|month|mon)");
-final daysRegex = RegExp(r"(\d+)([ ]*)(days|day|d)");
-final hoursRegex = RegExp(r"(\d+)([ ]*)(hours|hour|h)");
-final minutesRegex = RegExp(r"(\d+)([ ]*)(minutes|minute|min|m)");
-final secondsRegex = RegExp(r"(\d+)([ ]*)(seconds|second|secs|sec|s)");
+final yearsRegex = RegExp(r"(-?\d+)([ ]*)(years|year|y)");
+final monthsRegex = RegExp(r"(-?\d+)([ ]*)(months|month|mon)");
+final daysRegex = RegExp(r"(-?\d+)([ ]*)(days|day|d)");
+final hoursRegex = RegExp(r"(-?\d+)([ ]*)(hours|hour|h)");
+final minutesRegex = RegExp(r"(-?\d+)([ ]*)(minutes|minute|min|m)");
+final secondsRegex = RegExp(r"(-?\d+)([ ]*)(seconds|second|secs|sec|s)");
 
 Duration _computeYears(int years) {
   final now = DateTime.now();
@@ -30,7 +30,7 @@ Duration? parseStringToDuration(
   bool matchMinutes = true,
   bool matchSeconds = true,
   bool matchMilliSeconds = true,
-  bool allowNegative = true,
+  bool allowNegative = false,
 }) {
   var duration = Duration.zero;
   bool parsed = false;
