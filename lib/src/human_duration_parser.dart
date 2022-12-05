@@ -7,10 +7,6 @@ final hoursRegex = RegExp(r"(\d+)([ ]*)(hours|hour|h)");
 final minutesRegex = RegExp(r"(\d+)([ ]*)(minutes|minute|min|m)");
 final secondsRegex = RegExp(r"(\d+)([ ]*)(seconds|second|secs|sec|s)");
 
-Duration addTwoDurations(Duration first, Duration second) {
-  return Duration(milliseconds: first.inMilliseconds + second.inMilliseconds);
-}
-
 Duration parseStringToDuration(
   String durationString, {
   bool matchYears = true,
@@ -21,64 +17,29 @@ Duration parseStringToDuration(
   bool matchSeconds = true,
   bool matchMilliSeconds = true,
 }) {
-  var duration = Duration();
+  var duration = Duration.zero;
 
-  if (matchYears) {
-    final yearMatch = yearsRegex.firstMatch(durationString);
-    if (yearMatch != null) {
-      final yearNumber = yearMatch.group(1);
-      if (yearNumber != null) {
-        duration = addTwoDurations(duration, Duration(days: 365 * int.parse(yearNumber)));
-      }
-    }
-  }
+  final elements = <RegExp, Duration Function(int amount)>{
+    if (matchYears) yearsRegex: (amount) => const Duration(days: 365) * amount,
+    if (matchMonths) monthsRegex: (amount) => const Duration(days: 30) * amount,
+    if (matchDays) daysRegex: (amount) => const Duration(days: 1) * amount,
+    if (matchHours) hoursRegex: (amount) => const Duration(hours: 1) * amount,
+    if (matchMinutes) minutesRegex: (amount) => const Duration(minutes: 1) * amount,
+    if (matchSeconds) secondsRegex: (amount) => const Duration(seconds: 1) * amount,
+  };
 
-  if (matchMonths) {
-    final monthsMatch = monthsRegex.firstMatch(durationString);
-    if (monthsMatch != null) {
-      final monthNumber = monthsMatch.group(1);
-      if (monthNumber != null) {
-        duration = addTwoDurations(duration, Duration(days: 30 * int.parse(monthNumber)));
-      }
-    }
-  }
+  for (final entry in elements.entries) {
+    final pattern = entry.key;
+    final value = entry.value;
 
-  if (matchDays) {
-    final daysMatch = daysRegex.firstMatch(durationString);
-    if (daysMatch != null) {
-      final daysNumber = daysMatch.group(1);
-      if (daysNumber != null) {
-        duration = addTwoDurations(duration, Duration(days: int.parse(daysNumber)));
-      }
-    }
-  }
+    final match = pattern.firstMatch(durationString);
+    if (match != null) {
+      final amountText = match.group(1);
+      assert(amountText != null, 'Invalid pattern was provided');
 
-  if (matchHours) {
-    final hoursMatch = hoursRegex.firstMatch(durationString);
-    if (hoursMatch != null) {
-      final hoursNumber = hoursMatch.group(1);
-      if (hoursNumber != null) {
-        duration = addTwoDurations(duration, Duration(hours: int.parse(hoursNumber)));
-      }
-    }
-  }
-
-  if (matchMinutes) {
-    final minutesMatch = minutesRegex.firstMatch(durationString);
-    if (minutesMatch != null) {
-      final minutesNumber = minutesMatch.group(1);
-      if (minutesNumber != null) {
-        duration = addTwoDurations(duration, Duration(minutes: int.parse(minutesNumber)));
-      }
-    }
-  }
-
-  if (matchSeconds) {
-    final secondsMatch = secondsRegex.firstMatch(durationString);
-    if (secondsMatch != null) {
-      final secondNumber = secondsMatch.group(1);
-      if (secondNumber != null) {
-        duration = addTwoDurations(duration, Duration(seconds: int.parse(secondNumber)));
+      final amount = int.tryParse(amountText!);
+      if (amount != null) {
+        duration += value(amount);
       }
     }
   }
