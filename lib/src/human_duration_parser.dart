@@ -1,88 +1,72 @@
 library duration_parser;
 
-final yearsRegex = RegExp(r"(\d+)([ ]*)(years|year|y)");
-final monthsRegex = RegExp(r"(\d+)([ ]*)(months|month|mon)");
-final daysRegex = RegExp(r"(\d+)([ ]*)(days|day|d)");
-final hoursRegex = RegExp(r"(\d+)([ ]*)(hours|hour|h)");
-final minutesRegex = RegExp(r"(\d+)([ ]*)(minutes|minute|min|m)");
-final secondsRegex = RegExp(r"(\d+)([ ]*)(seconds|second|secs|sec|s)");
+final yearsRegex = RegExp(r"(-?\d+)([ ]*)(years|year|y)");
+final monthsRegex = RegExp(r"(-?\d+)([ ]*)(months|month|mon)");
+final daysRegex = RegExp(r"(-?\d+)([ ]*)(days|day|d)");
+final hoursRegex = RegExp(r"(-?\d+)([ ]*)(hours|hour|h)");
+final minutesRegex = RegExp(r"(-?\d+)([ ]*)(minutes|minute|min|m)");
+final secondsRegex = RegExp(r"(-?\d+)([ ]*)(seconds|second|secs|sec|s)");
 
-Duration addTwoDurations(Duration first, Duration second) {
-  return Duration(milliseconds: first.inMilliseconds + second.inMilliseconds);
+Duration _computeYears(int years) {
+  final now = DateTime.now();
+  final target = now.copyWith(year: now.year + years);
+
+  return target.difference(now);
 }
 
-Duration parseStringToDuration(
-    String durationString,
-    {
-      bool matchYears = true,
-      bool matchMonths = true,
-      bool matchDays = true,
-      bool matchHours = true,
-      bool matchMinutes = true,
-      bool matchSeconds = true,
-      bool matchMilliSeconds = true,
-    }
-) {
-  var duration = Duration();
+Duration _computeMonths(int months) {
+  final now = DateTime.now();
+  final target = now.copyWith(month: now.month + months);
 
-  if (matchYears) {
-    final yearMatch = yearsRegex.firstMatch(durationString);
-    if (yearMatch != null) {
-      final yearNumber = yearMatch.group(1);
-      if (yearNumber != null) {
-        duration = addTwoDurations(duration, Duration(days: 365 * int.parse(yearNumber)));
+  return target.difference(now);
+}
+
+Duration? parseStringToDuration(
+  String durationString, {
+  bool matchYears = true,
+  bool matchMonths = true,
+  bool matchDays = true,
+  bool matchHours = true,
+  bool matchMinutes = true,
+  bool matchSeconds = true,
+  bool matchMilliSeconds = true,
+  bool allowNegative = false,
+}) {
+  var duration = Duration.zero;
+  bool parsed = false;
+
+  final elements = <RegExp, Duration Function(int amount)>{
+    if (matchYears) yearsRegex: _computeYears,
+    if (matchMonths) monthsRegex: _computeMonths,
+    if (matchDays) daysRegex: (amount) => const Duration(days: 1) * amount,
+    if (matchHours) hoursRegex: (amount) => const Duration(hours: 1) * amount,
+    if (matchMinutes) minutesRegex: (amount) => const Duration(minutes: 1) * amount,
+    if (matchSeconds) secondsRegex: (amount) => const Duration(seconds: 1) * amount,
+  };
+
+  for (final entry in elements.entries) {
+    final pattern = entry.key;
+    final value = entry.value;
+
+    final match = pattern.firstMatch(durationString);
+    if (match != null) {
+      final amountText = match.group(1);
+      assert(amountText != null, 'Invalid pattern was provided');
+
+      final amount = int.tryParse(amountText!);
+      if (amount != null) {
+        duration += value(amount);
+        parsed = true;
       }
     }
   }
 
-  if (matchMonths) {
-    final monthsMatch = monthsRegex.firstMatch(durationString);
-    if (monthsMatch != null) {
-      final monthNumber = monthsMatch.group(1);
-      if (monthNumber != null) {
-        duration = addTwoDurations(duration, Duration(days: 30 * int.parse(monthNumber)));
-      }
-    }
+  if (!parsed) {
+    return null;
   }
 
-  if (matchDays) {
-    final daysMatch = daysRegex.firstMatch(durationString);
-    if (daysMatch != null) {
-      final daysNumber = daysMatch.group(1);
-      if (daysNumber != null) {
-        duration = addTwoDurations(duration, Duration(days: int.parse(daysNumber)));
-      }
-    }
-  }
-
-  if (matchHours) {
-    final hoursMatch = hoursRegex.firstMatch(durationString);
-    if (hoursMatch != null) {
-      final hoursNumber = hoursMatch.group(1);
-      if (hoursNumber != null) {
-        duration = addTwoDurations(duration, Duration(hours: int.parse(hoursNumber)));
-      }
-    }
-  }
-
-  if (matchMinutes) {
-    final minutesMatch = minutesRegex.firstMatch(durationString);
-    if (minutesMatch != null) {
-      final minutesNumber = minutesMatch.group(1);
-      if (minutesNumber != null) {
-        duration = addTwoDurations(duration, Duration(minutes: int.parse(minutesNumber)));
-      }
-    }
-  }
-
-  if (matchSeconds) {
-    final secondsMatch = secondsRegex.firstMatch(durationString);
-    if (secondsMatch != null) {
-      final secondNumber = secondsMatch.group(1);
-      if (secondNumber != null) {
-        duration = addTwoDurations(duration, Duration(seconds: int.parse(secondNumber)));
-      }
-    }
+  if (!allowNegative && duration < Duration.zero) {
+    return null;
   }
 
   return duration;

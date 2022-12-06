@@ -7,9 +7,9 @@ void main() {
     final yearResult = parseStringToDuration("1 year");
     final yResult = parseStringToDuration("1y");
 
-    expect(365, equals(yearsResult.inDays));
-    expect(365, equals(yearResult.inDays));
-    expect(365, equals(yResult.inDays));
+    expect(365, equals(yearsResult?.inDays));
+    expect(365, equals(yearResult?.inDays));
+    expect(365, equals(yResult?.inDays));
   });
 
   test("months test", () {
@@ -17,9 +17,9 @@ void main() {
     final monthResult = parseStringToDuration("1 month");
     final mResult = parseStringToDuration("3mon");
 
-    expect(60, equals(monthsResult.inDays));
-    expect(30, equals(monthResult.inDays));
-    expect(90, equals(mResult.inDays));
+    expect(60, equals(monthsResult?.inDays));
+    expect(30, equals(monthResult?.inDays));
+    expect(90, equals(mResult?.inDays));
   });
 
   test("days test", () {
@@ -27,9 +27,9 @@ void main() {
     final dayResult = parseStringToDuration("1 day");
     final dResult = parseStringToDuration("3d");
 
-    expect(2, equals(daysResult.inDays));
-    expect(1, equals(dayResult.inDays));
-    expect(3, equals(dResult.inDays));
+    expect(2, equals(daysResult?.inDays));
+    expect(1, equals(dayResult?.inDays));
+    expect(3, equals(dResult?.inDays));
   });
 
   test("hours test", () {
@@ -37,9 +37,9 @@ void main() {
     final hourResult = parseStringToDuration("1 hour");
     final hResult = parseStringToDuration("3h");
 
-    expect(2, equals(hoursResult.inHours));
-    expect(1, equals(hourResult.inHours));
-    expect(3, equals(hResult.inHours));
+    expect(2, equals(hoursResult?.inHours));
+    expect(1, equals(hourResult?.inHours));
+    expect(3, equals(hResult?.inHours));
   });
 
   test("minutes test", () {
@@ -48,10 +48,10 @@ void main() {
     final minResult = parseStringToDuration("4 min");
     final mResult = parseStringToDuration("3m");
 
-    expect(2, equals(minutesResult.inMinutes));
-    expect(4, equals(minResult.inMinutes));
-    expect(1, equals(minuteResult.inMinutes));
-    expect(3, equals(mResult.inMinutes));
+    expect(2, equals(minutesResult?.inMinutes));
+    expect(4, equals(minResult?.inMinutes));
+    expect(1, equals(minuteResult?.inMinutes));
+    expect(3, equals(mResult?.inMinutes));
   });
 
   test("seconds test", () {
@@ -61,10 +61,10 @@ void main() {
     final secResult = parseStringToDuration("1 sec");
     final sResult = parseStringToDuration("3s");
 
-    expect(2, equals(secondsResult.inSeconds));
-    expect(4, equals(secsResult.inSeconds));
-    expect(1, equals(secondResult.inSeconds));
-    expect(1, equals(secResult.inSeconds));
-    expect(3, equals(sResult.inSeconds));
+    expect(2, equals(secondsResult?.inSeconds));
+    expect(4, equals(secsResult?.inSeconds));
+    expect(1, equals(secondResult?.inSeconds));
+    expect(1, equals(secResult?.inSeconds));
+    expect(3, equals(sResult?.inSeconds));
   });
 }
